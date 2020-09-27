@@ -34,10 +34,17 @@ public class CommandsManager {
     }
 
     public void executeCommand(UserInterface cli, Storage storage,  String commandString) throws NoSuchCommandException, IOException {
-        String[] parsedCommandString = commandString.split(" ");
-        Command command = getCommand(parsedCommandString[0]);
-        String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
-        command.execute(cli, storage, args);
+        try{
+            String[] parsedCommandString = commandString.split(" ");
+            Command command = getCommand(parsedCommandString[0]);
+            String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
+            command.execute(cli, storage, args);
+        }catch (NoSuchElementException e){
+            cli.writeln("lox");
+        }catch (Exception e){
+            throw e;
+        }
+
     }
 
     /**
@@ -48,7 +55,7 @@ public class CommandsManager {
      */
     public Command getCommand(String cmd) throws NoSuchCommandException {
         if (!commands.containsKey(cmd)) {
-            throw new NoSuchCommandException("Command not found");
+            throw new NoSuchCommandException(cmd);
         }
         return commands.getOrDefault(cmd, null);
     }

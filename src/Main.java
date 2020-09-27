@@ -34,8 +34,10 @@ public class Main {
                 String cmd = cli.read();
                 try{
                     cmdManager.executeCommand(cli, storage, cmd);
+                }catch (java.util.NoSuchElementException e){
+                    cli.writeln("Invalid script");
                 }catch (NoSuchCommandException e){
-                    cli.writeln("Command not found");
+                    cli.writeln("Command "+e.getMessage()+" not found");
                 }catch (InvalidInputException e){
                     cli.writeln("Wrong data provided: "+e.getMessage());
                 }catch (InvalidParamsCount e){

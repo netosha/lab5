@@ -10,6 +10,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 
@@ -25,10 +27,10 @@ public class UserInterface {
     /**
      * User CLI Constructor
      *
-     * @param reader    Reader instance
-     * @param writer    Writer instance
+     * @param reader Reader instance
+     * @param writer Writer instance
      */
-    public UserInterface(Reader reader, Writer writer){
+    public UserInterface(Reader reader, Writer writer) {
         this.reader = reader;
         this.writer = writer;
         this.scanner = new Scanner(reader);
@@ -37,11 +39,11 @@ public class UserInterface {
     /**
      * User CLI Constructor with custom scanner
      *
-     * @param reader    Reader instance
-     * @param writer    Writer instance
-     * @param scanner    Writer instance
+     * @param reader  Reader instance
+     * @param writer  Writer instance
+     * @param scanner Writer instance
      */
-    public UserInterface(Reader reader, Writer writer, Scanner scanner){
+    public UserInterface(Reader reader, Writer writer, Scanner scanner) {
         this.reader = reader;
         this.writer = writer;
         this.scanner = scanner;
@@ -50,11 +52,11 @@ public class UserInterface {
     /**
      * Writes message with "\n"
      *
-     * @param message   Message to write
+     * @param message Message to write
      */
-    public void writeln(String message){
+    public void writeln(String message) {
         try {
-            writer.write(message+"\n");
+            writer.write(message + "\n");
             writer.flush();
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -64,9 +66,9 @@ public class UserInterface {
     /**
      * Writes message
      *
-     * @param message   Message to write
+     * @param message Message to write
      */
-    public void write(String message){
+    public void write(String message) {
         try {
             writer.write(message);
             writer.flush();
@@ -90,132 +92,216 @@ public class UserInterface {
      * @return User's string
      */
     public String read() {
-        String tmp = scanner.nextLine();
-        if(tmp.equals("#exit")){
-            throw new AbortCommandException("Command aborted");
+        try{
+            String tmp = scanner.nextLine();
+            if (tmp.equals("#exit")) {
+                throw new AbortCommandException("Command aborted");
+            }
+            return tmp;
+        }catch (Exception e){
+            throw new InvalidInputException("");
         }
-        return  tmp;
+    }
+
+    public Long readLongWithMessage(String message) {
+        Long tmp = null;
+        do {
+            try {
+                writeln(message);
+                tmp = Long.parseLong(read());
+                return tmp;
+            } catch (NumberFormatException e) {
+            } catch (Exception e) {
+                throw e;
+            }
+        } while (tmp == null);
+
+        return tmp;
+    }
+
+    public double readDobuleWithMessage(String message) {
+        Double tmp = null;
+        do {
+            try {
+                writeln(message);
+                tmp = Double.parseDouble(read());
+                return tmp;
+            } catch (NumberFormatException e) {
+            } catch (Exception e) {
+                throw e;
+            }
+        } while (tmp == null);
+        return tmp;
+    }
+
+    public Integer readIntWithMessage(String message) {
+        Integer tmp = null;
+        do {
+            try {
+                writeln(message);
+                tmp = Integer.parseInt(read());
+                return tmp;
+            } catch (NumberFormatException e) {
+            }catch (Exception e){
+                throw e;
+            }
+        } while (tmp == null);
+
+        return tmp;
+    }
+
+    public String readStringWithMessage(String message) {
+        String tmp = null;
+        do {
+            try{
+                writeln(message);
+                tmp = read();
+            }catch (Exception e){
+                throw e;
+            }
+
+        } while (tmp == null || tmp.length() == 0);
+        return tmp;
+    }
+
+    public LocalDateTime readLocalDateTime(String message) {
+        LocalDateTime tmp = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        do {
+            try {
+                writeln(message);
+                tmp = LocalDateTime.parse(read(), formatter);
+                return tmp;
+            } catch (DateTimeParseException e) {
+
+            } catch (Exception e) {
+                throw e;
+            }
+        } while (tmp == null);
+        return tmp;
     }
 
     public Coordinates readCoordinates() {
-        try{
+        try {
             int x;
-            long y;
-            writeln("Input X (integer)");
-            x = Integer.parseInt(read());
-            writeln("Input Y (long) (min value = -496)");
-            y = Long.parseLong(read());
-            return new Coordinates(x,y);
-        }catch (Exception e){
+            Long y = null;
+            x = readIntWithMessage("Input X (int)");
+            do {
+                y = readLongWithMessage("Input Y (long) (min value = -495)");
+            } while (y <= -496 || y == null);
+            return new Coordinates(x, y);
+        } catch (Exception e) {
             throw new InvalidInputException("Failed to parse params");
         }
     }
 
-    public FormOfEducation readFormOfEducation() {
-        int i = 1;
-        int formIndex;
-        for(FormOfEducation form : FormOfEducation.values()){
-            writeln("| "+i+" "+form.getName());
-            i++;
-        }
-        try{
-            formIndex = Integer.parseInt(read());
-            if(formIndex < 1 || formIndex > FormOfEducation.values().length){
-                throw new InvalidInputException("Wrong number");
+    public FormOfEducation readFormOfEducation(String message) {
+        int formIndex = 0;
+        do {
+            try {
+                int i = 1;
+                writeln(message);
+                for (FormOfEducation form : FormOfEducation.values()) {
+                    writeln("| " + i + " " + form.getName());
+                    i++;
+                }
+                formIndex = readIntWithMessage("Choose (from 1 to " + (i - 1) + ")");
+            } catch (Exception e) {
+                throw e;
             }
-            return FormOfEducation.values()[formIndex-1];
-        }catch (Exception e){
-            throw new InvalidInputException("Failed to parse params");
-        }
+        } while (formIndex <= 0 || formIndex > (FormOfEducation.values().length));
+        return FormOfEducation.values()[formIndex - 1];
+
     }
 
 
-    public Semester readSemester(){
-        int i = 1;
-        int semesterIndex;
-        for(Semester semester : Semester.values()){
-            writeln("| "+i+" "+semester.getName());
-            i++;
-        }
-        try{
-            semesterIndex = Integer.parseInt(read());
-            if(semesterIndex < 1 || semesterIndex > Semester.values().length){
-                throw new InvalidInputException("Wrong number");
+    public Semester readSemester(String message) {
+        int semesterIndex = 0;
+        do {
+            try {
+                int i = 1;
+                writeln(message);
+                for (Semester form : Semester.values()) {
+                    writeln("| " + i + " " + form.getName());
+                    i++;
+                }
+                semesterIndex = readIntWithMessage("Choose (from 1 to " + (i - 1) + ")");
+            } catch (Exception e) {
+                throw e;
             }
-            return Semester.values()[semesterIndex-1];
-        }catch (Exception e){
-            throw new InvalidInputException("Failed to parse params");
-        }
+        } while (semesterIndex <= 0 || semesterIndex > (Semester.values().length));
+        return Semester.values()[semesterIndex - 1];
+
     }
 
-    public Color readColor(){
-        int i = 1;
-        int colorIndex;
-        for(Color color : Color.values()){
-            writeln("| "+i+" "+color.getName());
-            i++;
-        }
-        try{
-            colorIndex = Integer.parseInt(read());
-            if(colorIndex < 1 || colorIndex > Color.values().length){
-                throw new InvalidInputException("Wrong number");
+    public Color readColor(String message) {
+        int colorIndex = 0;
+        do {
+            try {
+                int i = 1;
+                writeln(message);
+                for (Color form : Color.values()) {
+                    writeln("| " + i + " " + form.getName());
+                    i++;
+                }
+                colorIndex = readIntWithMessage("Choose (from 1 to " + (i - 1) + ")");
+            } catch (AbortCommandException e) {
+                throw e;
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
             }
-            return Color.values()[colorIndex-1];
-        }catch (Exception e){
-            throw new InvalidInputException("Failed to parse params");
-        }
+        } while (colorIndex <= 0 || colorIndex > (Color.values().length));
+        return Color.values()[colorIndex - 1];
     }
 
-    public Person readPerson(){
+
+    public Person readPerson() {
         String name;
         LocalDateTime birthday;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         double weight;
         Color color;
 
-        try{
-            writeln("Input Person name");
-            name = read();
-            writeln("Input Person birthday (like 2016-03-04 11:30)");
-            birthday = LocalDateTime.parse(read(), formatter);
-            writeln("Input Person weight (double)");
-            weight = Double.parseDouble(read());
-            writeln("Input Person hair color (integer)");
-            color = readColor();
+        try {
+            name = readStringWithMessage("Input Person name");
+            birthday = readLocalDateTime("Input Person birthday (in format like 2016-03-04 11:30)");
+            weight = readDobuleWithMessage("Input Person weight (dobule)");
+            color = readColor("Input Person hair color");
             return new Person(name, birthday, weight, color);
-        }catch (Exception e){
-            throw new InvalidInputException("Failed to parse params");
+        } catch (Exception e) {
+            throw e;
         }
     }
+
 
     public StudyGroup readStudyGroup() {
-        String name;
-        Coordinates coordinates;
-        long studentsCount;
-        FormOfEducation formOfEducation;
-        Semester semester;
-        Person person;
-        try{
-            writeln("Input StudyGroup name");
-            name = read();
-            writeln("Input StudyGroup coordinates");
-            coordinates = readCoordinates();
-            writeln("Input StudyGroup students count (>0) (long)");
-            studentsCount = Long.parseLong(read());
-            if(studentsCount <= 0){
-                throw new InvalidInputException("Student's count should be more, than 0.");
+        try {
+            String name;
+            Coordinates coordinates;
+            long studentsCount = 0;
+            FormOfEducation formOfEducation;
+            Semester semester;
+            Person person;
+            try {
+                name = readStringWithMessage("Input StudyGroup name");
+                coordinates = readCoordinates();
+                do {
+                    studentsCount = readLongWithMessage("Input students count (long, >0)");
+                } while (studentsCount <= 0);
+
+                writeln("Chose form of education (integer):");
+                formOfEducation = readFormOfEducation("Select form of education");
+                semester = readSemester("Chose semester (integer):");
+                person = readPerson();
+                return new StudyGroup(name, coordinates, studentsCount, formOfEducation, semester, person);
+            } catch (AbortCommandException e) {
+                throw new AbortCommandException("Command abroted");
+            } catch (Exception e) {
+                throw new InvalidInputException(e.getMessage());
             }
-            writeln("Chose form of education (integer):");
-            formOfEducation = readFormOfEducation();
-            writeln("Chose semester (integer):");
-            semester = readSemester();
-            person = readPerson();
-            return new StudyGroup(name, coordinates, studentsCount, formOfEducation, semester, person);
-        }catch (AbortCommandException e){
-            throw new AbortCommandException("Command abroted");
-        }catch (Exception e){
-            throw new InvalidInputException(e.getMessage());
+        } catch (Exception e) {
+            throw e;
         }
     }
-
 }
