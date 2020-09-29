@@ -1,4 +1,6 @@
 import collection.*;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import commands.*;
 import exceptions.AbortCommandException;
 import exceptions.InvalidInputException;
@@ -7,10 +9,15 @@ import exceptions.NoSuchCommandException;
 import utils.*;
 import utils.Storage;
 
+import javax.xml.bind.*;
 import java.io.*;
+
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 public class Main {
@@ -24,10 +31,27 @@ public class Main {
                 new InputStreamReader(System.in, StandardCharsets.UTF_8),
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
+        if(args.length > 0){
+            try{
+                File file = new File(args[0]);
+                FileInputStream fis = null;
+                BufferedInputStream bis = null;
+                BufferedReader r = null;
+                fis = new FileInputStream(file);
+                bis = new BufferedInputStream(fis);
+                r = new BufferedReader(new InputStreamReader(bis, UTF_8));
+                String lines = r.lines().collect(Collectors.joining());
 
-        Person admin = new Person("admin", LocalDateTime.now(), 5.0, Color.BLUE);
-        StudyGroup sg = new StudyGroup(0, "name", new Coordinates(5, (long) 5), (long) 1, FormOfEducation.DISTANCE_EDUCATION, Semester.FOURTH, admin);
-        storage.put("1",sg);
+                XStream xstream = new XStream(new DomDriver()); // does not require XPP3 library
+                xstream.alias("storage", Storage.class);
+                Storage stor = (Storage) xstream.fromXML(lines);
+                storage = stor;
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+        }
 
         while (true){
             if(cli.hasNextLine()){

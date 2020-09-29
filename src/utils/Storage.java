@@ -12,7 +12,8 @@ import java.util.Map;
 @XmlRootElement(name="storage")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Storage {
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
+
     private java.time.ZonedDateTime creationDate;
     private Map<String, StudyGroup> studyGroups = new LinkedHashMap<String, StudyGroup>();
 
@@ -67,14 +68,3 @@ public class Storage {
 
 }
 
-class DateTimeAdapter extends XmlAdapter<String, ZonedDateTime>{
-    public ZonedDateTime unmarshal(String v) throws Exception {
-        return ZonedDateTime.parse(v);
-    }
-
-    @Override
-    public String marshal(ZonedDateTime v) throws Exception {
-        return v.toString();
-    }
-
-}

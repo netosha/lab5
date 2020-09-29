@@ -1,5 +1,7 @@
 package commands;
 import collection.*;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import utils.*;
 
 
@@ -16,14 +18,14 @@ public class Save extends Command{
     public void execute(UserInterface cli, Storage storage, String[] args) throws IOException {
         try{
             File file = new File("dump.xml");
-            PrintWriter printWriter = new PrintWriter(file);
+            FileOutputStream printWriter = new FileOutputStream(file);
             StringWriter writer = new StringWriter();
-            JAXBContext context = JAXBContext.newInstance(Storage.class);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(storage, printWriter);
+            XStream xstream = new XStream(new DomDriver()); // does not require XPP3 library
+            xstream.alias("storage", Storage.class);
+            String xml = xstream.toXML(storage);
+            printWriter.write(xml.getBytes("UTF-8"));
             cli.writeln("Saved storage dump file to "+file.getAbsolutePath());
-        }catch (JAXBException e){
+        }catch (Exception e){
             e.printStackTrace();
             throw new IOException("Serialaize XML to Object failed");
         }
