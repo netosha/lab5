@@ -5,13 +5,11 @@ import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import exceptions.NoSuchCommandException;
 import utils.Storage;
+import utils.UserInterface;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
-import commands.*;
-import commands.*;
-import utils.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -27,7 +25,6 @@ public class Main {
                 new InputStreamReader(System.in, StandardCharsets.UTF_8),
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
-
         if(args.length > 0){
             try{
                 File file = new File(args[0]);
@@ -54,6 +51,7 @@ public class Main {
                 }catch (java.util.NoSuchElementException e){
                     cli.writeln("Invalid script");
                 }catch (NoSuchCommandException e){
+                    cli.writeln("You using client");
                     cli.writeln("Command "+e.getMessage()+" not found");
                 }catch (InvalidInputException e){
                     cli.writeln("Wrong data provided: "+e.getMessage());
