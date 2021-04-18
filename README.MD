@@ -8,7 +8,9 @@ All task source located in `tasks`
 ## Features
 
 ## Installation
-
+```
+mvn install
+java -jar target/lab5-1.0-SNAPSHOT-jar-with-dependencies.jar
 ## Commands
 
 ## Usage
