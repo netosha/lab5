@@ -31,17 +31,14 @@ public class Main {
         if(args.length > 0){
             try{
                 File file = new File(args[0]);
-                FileInputStream fis = null;
-                BufferedInputStream bis = null;
-                BufferedReader r = null;
-                fis = new FileInputStream(file);
-                bis = new BufferedInputStream(fis);
-                r = new BufferedReader(new InputStreamReader(bis, UTF_8));
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                BufferedReader r = new BufferedReader(new InputStreamReader(bis, UTF_8));
                 String lines = r.lines().collect(Collectors.joining());
-
                 XStream xstream = new XStream(new DomDriver()); // does not require XPP3 library
                 xstream.alias("storage", Storage.class);
                 storage = (Storage) xstream.fromXML(lines);
+                cli.writeln("Storage loaded from "+file.getAbsolutePath().toString());
             }
             catch (FileNotFoundException e)
             {
