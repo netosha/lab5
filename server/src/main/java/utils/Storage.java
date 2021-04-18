@@ -31,6 +31,9 @@ public class Storage {
         studyGroups.remove(getKey(studyGroups, o));
     }
 
+
+    // Returns value key of map
+    // Analog of Array.prototype.findIndex() in JS
     private  <K, V> K getKey(Map<K, V> map, V value) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
             if (entry.getValue().equals(value)) {

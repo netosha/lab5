@@ -26,6 +26,12 @@ echo workin on it
 
 ## Usage
 
+
+Send msg to server via command line
+```
+curl telnet://localhost:8080 <<< "MSG"
+```
+
 ## Meta
 ```
 Lab 5 variant: 12009 
