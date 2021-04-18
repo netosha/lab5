@@ -11,12 +11,13 @@ All task source located in `tasks`
 ```
 mvn install
 java -jar target/lab5-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
 ## Commands
 
 ## Usage
 
 ## Meta
-
 ```
 Lab 5 variant: 12009 
 Proof: https://docs.google.com/spreadsheets/d/1mKBuYxcuHVE2R1ZudkjkWBBd8l4liftFLo1GhpxH46Q
