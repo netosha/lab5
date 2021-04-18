@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RemoveLower extends Command{
+public class RemoveLower extends commands.Command {
     public RemoveLower(){
         command = "remove_lower";
         helpText = "Remove all StudyGroups where students count lower, than in StudyGroup provided by key";

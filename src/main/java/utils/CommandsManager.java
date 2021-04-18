@@ -9,6 +9,8 @@ import java.util.*;
 public class CommandsManager {
     private Map<String, Command> commands = new LinkedHashMap<String, Command>();
 
+
+    // Change
     public CommandsManager() {
         addCommand(new Help());
         addCommand(new Show());
