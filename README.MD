@@ -8,15 +8,25 @@ All task source located in `tasks`
 ## Features
 
 ## Installation
+
+Client
 ```
+cd client
 mvn install
 java -jar target/lab5-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+Server
+```
+echo workin on it
+```
+
+
 ## Commands
 
 ## Usage
 
 ## Meta
-
 ```
 Lab 5 variant: 12009 
 Proof: https://docs.google.com/spreadsheets/d/1mKBuYxcuHVE2R1ZudkjkWBBd8l4liftFLo1GhpxH46Q
