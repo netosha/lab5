@@ -9,11 +9,8 @@ import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@XmlRootElement(name="storage")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Storage {
-    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
 
+public class Storage {
     private java.time.ZonedDateTime creationDate;
     private Map<String, StudyGroup> studyGroups = new LinkedHashMap<String, StudyGroup>();
 

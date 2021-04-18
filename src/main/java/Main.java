@@ -1,21 +1,17 @@
-import collection.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import commands.*;
 import exceptions.AbortCommandException;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import exceptions.NoSuchCommandException;
-import utils.*;
 import utils.Storage;
 
-import javax.xml.bind.*;
 import java.io.*;
-
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.*;
 import java.util.stream.Collectors;
+import commands.*;
+import commands.*;
+import utils.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -23,7 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class Main {
     public static void main(String[] args) {
         // Init command manager
-        CommandsManager cmdManager = new CommandsManager();
+        utils.CommandsManager cmdManager = new utils.CommandsManager();
         Storage storage = new Storage();
 
         // Init user cli
@@ -31,6 +27,7 @@ public class Main {
                 new InputStreamReader(System.in, StandardCharsets.UTF_8),
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
+
         if(args.length > 0){
             try{
                 File file = new File(args[0]);
@@ -44,15 +41,14 @@ public class Main {
 
                 XStream xstream = new XStream(new DomDriver()); // does not require XPP3 library
                 xstream.alias("storage", Storage.class);
-                Storage stor = (Storage) xstream.fromXML(lines);
-                storage = stor;
+                storage = (Storage) xstream.fromXML(lines);
             }
             catch (FileNotFoundException e)
             {
-                e.printStackTrace();
+//                e.printStackTrace();
+                cli.writeln("Failed to load dump from file");
             }
         }
-
         while (true){
             if(cli.hasNextLine()){
                 String cmd = cli.read();
