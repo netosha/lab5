@@ -1,8 +1,6 @@
 package network;
-
-import com.thoughtworks.xstream.XStream;
-import utils.Storage;
-
+import commands.Command;
+import utils.*;
 import java.io.*;
 import java.net.*;
 import java.nio.*;
@@ -19,14 +17,12 @@ public class Server {
     private BufferedReader in;
     private ServerSocketChannel serverSocketChannel;
     private final Selector selector = Selector.open();
-    utils.CommandsManager cmdManager = new utils.CommandsManager();
-    Storage storage = new Storage();
+    CommandsManager cmdManager;
+    Storage storage;
 
-    public Server() throws IOException {
-    }
-
-    public void send(SocketChannel sc){
-
+    public Server(CommandsManager cmd, Storage strg) throws IOException {
+        cmdManager = cmd;
+        storage = strg;
     }
 
     public void listen() throws IOException {
@@ -35,45 +31,49 @@ public class Server {
         SelectionKey key = null;
 
         while (true) {
-            if (selector.select() <= 0)
-                continue;
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> iterator = selectedKeys.iterator();
-            while (iterator.hasNext()) {
-                key = (SelectionKey) iterator.next();
-                iterator.remove();
-                if (key.isAcceptable()) {
-                    SocketChannel sc = serverSocketChannel.accept();
-                    sc.configureBlocking(false);
-                    sc.register(selector, SelectionKey.
-                            OP_READ);
-                    System.out.println("Connection Accepted: " + sc.getLocalAddress());
-                }
-                if (key.isReadable()) {
-                    SocketChannel sc = (SocketChannel) key.channel();
+            try {
+                if (selector.select() <= 0)
+                    continue;
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Iterator<SelectionKey> iterator = selectedKeys.iterator();
+                while (iterator.hasNext()) {
+                    key = (SelectionKey) iterator.next();
+                    iterator.remove();
+                    if (key.isAcceptable()) {
+                        SocketChannel sc = serverSocketChannel.accept();
+                        sc.configureBlocking(false);
+                        sc.register(selector, SelectionKey.
+                                OP_READ);
+                        System.out.println("Connection Accepted: " + sc.getLocalAddress());
+                    }
+                    if (key.isReadable()) {
+                        SocketChannel sc = (SocketChannel) key.channel();
 
-                    sc.configureBlocking(false);
-                    ByteBuffer bb = ByteBuffer.allocate(1024);
-                    sc.read(bb);
-                    String result = new String(bb.array()).trim();
-                    if (result.length() <= 0) {
-                        System.out.println(result);
-                        sc.close();
-                        System.out.println("Connection closed...");
-                    } else {
-                        bb.flip();
-                        try {
-                            String payload = cmdManager.executeCommand(storage, result);
-                            System.out.printf("Payload: %s", payload);
-                            sc.write(ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8)));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            sc.write(enc.encode(CharBuffer.wrap("Command execution failed: " + e.toString())));
+                        sc.configureBlocking(false);
+                        ByteBuffer bb = ByteBuffer.allocate(1024);
+                        sc.read(bb);
+                        String result = new String(bb.array()).trim();
+                        if (result.length() <= 0) {
+                            System.out.println(result);
+                            sc.close();
+                            System.out.println("Connection closed...");
+                        } else {
+                            bb.flip();
+                            try {
+                                String payload = cmdManager.executeCommand(storage, result);
+                                System.out.printf("Payload: %s\n", payload);
+                                sc.write(ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8)));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                sc.write(enc.encode(CharBuffer.wrap("Command execution failed: " + e.toString())));
+                            }
+                            sc.write(enc.encode(CharBuffer.wrap("\n")));
+                            System.out.println("msg: " + result + "\nlen: " + result.length());
                         }
-                        sc.write(enc.encode(CharBuffer.wrap("\n")));
-                        System.out.println("msg: " + result + "\nlen: " + result.length());
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -98,14 +98,14 @@ public class Server {
 
     }
 
-    public static void main(int port) {
+    public static void main(CommandsManager cmdManager, Storage storage, int port) {
         try {
-            Server server = new Server();
+            Server server = new Server(cmdManager, storage);
             server.start(port);
             server.listen();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
+
 }

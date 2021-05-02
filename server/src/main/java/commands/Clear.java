@@ -2,6 +2,7 @@ package commands;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import exceptions.InvalidParamsCount;
 import utils.Storage;
 import utils.UserInterface;
 
@@ -12,37 +13,47 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 
 
-public class Info extends Command {
-    public Info() {
-        command = "info";
-        helpText = "Returns information about current storage (creation time, elements count, storage type and etc.)";
+public class Clear extends Command{
+    public Clear(){
+        command = "clear";
+        helpText = "Cleans storage";
     }
 
     @XmlRootElement(name="Data")
     @XmlAccessorType(XmlAccessType.FIELD)
     public class Data {
-        private String type;
-        private Integer count;
-        private ZonedDateTime date;
+        private String message;
 
-        Data(String t, Integer c, ZonedDateTime d){
-            type = t;
-            count = c;
-            date = d;
+        Data(String m){
+            message = m;
+
         }
     }
 
     @Override
     public String execute(Storage storage, String[] args) throws IOException {
-        Data payload = new Data(storage.getStudyGroups().getClass().toString(), storage.getStudyGroups().size(), storage.getCreationDate());
+        if(args.length != 0){
+            throw new InvalidParamsCount("");
+        }
+
+        storage.clear();
+
+        Data payload = new Data("Storage successfully cleared");
         XStream xstream = new XStream(new StaxDriver());
         return xstream.toXML(payload);
     }
 
+
     @Override
     public void execute(UserInterface cli, Storage storage, String[] args) {
-        cli.writeln("Storage type : "+storage.getStudyGroups().getClass());
-        cli.writeln("Elements count : "+storage.getStudyGroups().size());
-        cli.writeln("Creation date : "+storage.getCreationDate());
+        if(args.length != 0){
+            throw new InvalidParamsCount("");
+        }
+
+        storage.clear();
+
+        cli.writeln("Storage successfully cleared");
     }
+
+
 }

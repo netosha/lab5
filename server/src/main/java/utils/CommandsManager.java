@@ -12,11 +12,14 @@ public class CommandsManager {
 
     public CommandsManager() {
         addCommand(new Info());
+        addCommand(new Clear());
+
     }
 
     private void addCommand(Command cmd) {
         commands.put(cmd.getCommand(), cmd);
     }
+
 
     public String executeCommand(Storage storage, String commandString) throws NoSuchCommandException, IOException {
         try{
@@ -27,6 +30,20 @@ public class CommandsManager {
         }catch (NoSuchElementException e){
             System.out.println("No such command");
             return new String("No such command");
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void executeCommand(UserInterface cli, Storage storage, String commandString) throws Exception {
+        try{
+            String[] parsedCommandString = commandString.split(" ");
+            Command command = getCommand(parsedCommandString[0]);
+            String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
+            command.execute(cli, storage, args);
+        }catch (NoSuchElementException e){
+            System.out.println("No such command");
         }catch (Exception e){
             throw e;
         }

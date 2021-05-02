@@ -1,36 +1,44 @@
+import exceptions.*;
+import utils.*;
+
 import java.io.*;
-import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        GreetClient client = new GreetClient();
-        String host = "localhost";
-        Integer port = 8080;
+        Client client = new Client();
+        client.connect();
+        CommandsManager cmdManager = new CommandsManager();
+        UserInterface cli = new UserInterface(
+                new InputStreamReader(System.in, StandardCharsets.UTF_8),
+                new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
+        );
 
-        do{
-            try{
-                client.startConnection(host, port);
-                System.out.printf("Connection established (%s:%d)%n", host, port);
-                break;
-            }catch (java.net.ConnectException e){
-                System.out.println("Connection refused. Trying again...");
-                TimeUnit.SECONDS.sleep(1);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }while (true);
-
-        Writer writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8);
-        Scanner scanner = new Scanner(new InputStreamReader(System.in, StandardCharsets.UTF_8));
         while (true) {
-            if(scanner.hasNextLine()){
-                String msg = client.sendMessage(scanner.nextLine());
-                System.out.println(msg);
+            if (cli.hasNextLine()) {
+                String cmd = cli.read();
+                try {
+                    cmdManager.executeCommand(cli, client, cmd);
+                } catch (java.util.NoSuchElementException e) {
+                    cli.writeln("Invalid script");
+                } catch (InvalidInputException e) {
+                    cli.writeln("Wrong data provided: " + e.getMessage());
+                } catch (InvalidParamsCount e) {
+                    cli.writeln("Invalid params count provided");
+                } catch (FileNotFoundException e) {
+                    cli.writeln("File not found (or you dont have permisions to read file)");
+                } catch (AbortCommandException e) {
+                    cli.writeln(e.getMessage());
+                } catch (IOException e) {
+                    cli.writeln("Unknown exception");
+                }
             }
         }
+//        while (true) {
+//            if(scanner.hasNextLine()){
+//                String msg = client.sendMessage(scanner.nextLine());
+//                System.out.println(msg);
+//            }
     }
 }
