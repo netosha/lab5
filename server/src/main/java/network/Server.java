@@ -1,5 +1,8 @@
 package network;
 
+import com.thoughtworks.xstream.XStream;
+import utils.Storage;
+
 import java.io.*;
 import java.net.*;
 import java.nio.*;
@@ -14,19 +17,21 @@ public class Server {
     private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
+    private ServerSocketChannel serverSocketChannel;
+    private final Selector selector = Selector.open();
+    utils.CommandsManager cmdManager = new utils.CommandsManager();
+    Storage storage = new Storage();
 
-    public void start(int port) throws IOException {
+    public Server() throws IOException {
+    }
+
+    public void send(SocketChannel sc){
+
+    }
+
+    public void listen() throws IOException {
         // https://www.developer.com/java/data/what-is-non-blocking-socket-programming-in-java/
-
         CharsetEncoder enc = StandardCharsets.UTF_8.newEncoder();
-
-        Selector selector = Selector.open();
-
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.configureBlocking(false);
-        serverSocketChannel.bind(new InetSocketAddress("localhost", 8080));
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
         SelectionKey key = null;
 
         while (true) {
@@ -46,25 +51,40 @@ public class Server {
                 }
                 if (key.isReadable()) {
                     SocketChannel sc = (SocketChannel) key.channel();
+
                     sc.configureBlocking(false);
                     ByteBuffer bb = ByteBuffer.allocate(1024);
                     sc.read(bb);
                     String result = new String(bb.array()).trim();
-                    bb.flip();
-                    sc.write(enc.encode(CharBuffer.wrap("IDI NAHOOY\n")));
-                    sc.write(bb);
-                    System.out.println("Message received: "
-                            + result
-                            + " Message length= " + result.length());
                     if (result.length() <= 0) {
+                        System.out.println(result);
                         sc.close();
                         System.out.println("Connection closed...");
+                    } else {
+                        bb.flip();
+                        try {
+                            String payload = cmdManager.executeCommand(storage, result);
+                            System.out.printf("Payload: %s", payload);
+                            sc.write(ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8)));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            sc.write(enc.encode(CharBuffer.wrap("Command execution failed: " + e.toString())));
+                        }
+                        sc.write(enc.encode(CharBuffer.wrap("\n")));
+                        System.out.println("msg: " + result + "\nlen: " + result.length());
                     }
                 }
             }
         }
     }
 
+    public void start(int port) throws IOException {
+        serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.configureBlocking(false);
+        serverSocketChannel.bind(new InetSocketAddress("localhost", 8080));
+        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        System.out.println("server started on localhost:8080");
+    }
 
     public void stop() {
         try {
@@ -82,6 +102,7 @@ public class Server {
         try {
             Server server = new Server();
             server.start(port);
+            server.listen();
         } catch (Exception e) {
             e.printStackTrace();
         }

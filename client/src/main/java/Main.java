@@ -2,43 +2,35 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
-
-
-class Client {
-    private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
-
-    public void startConnection(String ip, int port) throws IOException {
-        clientSocket = new Socket(ip, port);
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    }
-
-    public String sendMessage(String msg) throws IOException {
-        out.println(msg);
-        String resp = in.readLine();
-        return resp;
-    }
-
-    public void stopConnection() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
-    }
-}
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        Client client = new Client();
-        client.startConnection("localhost", 8080);
+    public static void main(String[] args) throws IOException, InterruptedException {
+        GreetClient client = new GreetClient();
+        String host = "localhost";
+        Integer port = 8080;
 
+        do{
+            try{
+                client.startConnection(host, port);
+                System.out.printf("Connection established (%s:%d)%n", host, port);
+                break;
+            }catch (java.net.ConnectException e){
+                System.out.println("Connection refused. Trying again...");
+                TimeUnit.SECONDS.sleep(1);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }while (true);
+
+        Writer writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8);
         Scanner scanner = new Scanner(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-        Writer out = new OutputStreamWriter(System.out, StandardCharsets.UTF_8);
-        while (scanner.hasNext()) {
-            String response = client.sendMessage(scanner.nextLine());
-            System.out.println(response);
+        while (true) {
+            if(scanner.hasNextLine()){
+                String msg = client.sendMessage(scanner.nextLine());
+                System.out.println(msg);
+            }
         }
     }
 }
