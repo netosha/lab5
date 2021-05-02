@@ -18,14 +18,14 @@ public class Info extends Command {
         helpText = "Returns information about current storage (creation time, elements count, storage type and etc.)";
     }
 
-    @XmlRootElement(name="Data")
+    @XmlRootElement(name="Response")
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Data {
+    public class Response {
         private String type;
         private Integer count;
         private ZonedDateTime date;
 
-        Data(String t, Integer c, ZonedDateTime d){
+        Response(String t, Integer c, ZonedDateTime d){
             type = t;
             count = c;
             date = d;
@@ -33,16 +33,16 @@ public class Info extends Command {
     }
 
     @Override
-    public String execute(Storage storage, String[] args) throws IOException {
-        Data payload = new Data(storage.getStudyGroups().getClass().toString(), storage.getStudyGroups().size(), storage.getCreationDate());
+    public String execute(Storage storage, Object data) throws IOException {
+        Response payload = new Response(storage.getStudyGroups().getClass().toString(), storage.getStudyGroups().size(), storage.getCreationDate());
         XStream xstream = new XStream(new StaxDriver());
         return xstream.toXML(payload);
     }
 
     @Override
     public void execute(UserInterface cli, Storage storage, String[] args) {
-        cli.writeln("Storage type : "+storage.getStudyGroups().getClass());
-        cli.writeln("Elements count : "+storage.getStudyGroups().size());
-        cli.writeln("Creation date : "+storage.getCreationDate());
+        cli.writeln("Storage type: "+storage.getStudyGroups().getClass());
+        cli.writeln("Elements count: "+storage.getStudyGroups().size());
+        cli.writeln("Creation date: "+storage.getCreationDate());
     }
 }

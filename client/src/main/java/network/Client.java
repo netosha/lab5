@@ -1,9 +1,9 @@
-package utils;
+package network;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
@@ -18,10 +18,26 @@ public class Client {
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    public String sendMessage(String msg) throws IOException {
-        out.println(msg);
+    public String sendMessage(String command) throws IOException {
+        Message message = new Message(command, "");
+        XStream xstream = new XStream(new StaxDriver());
+        String req = xstream.toXML(message);
+        System.out.println(req);
+        out.println(req);
         String resp = in.readLine();
         return resp;
+
+    }
+
+    public String sendMessage(String command, Object data) throws IOException {
+        Message message = new Message(command, data);
+        XStream xstream = new XStream(new StaxDriver());
+        String req = xstream.toXML(message);
+        System.out.println(req);
+        out.println(req);
+        String resp = in.readLine();
+        return resp;
+
     }
 
     public void connect() throws InterruptedException {

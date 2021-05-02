@@ -2,7 +2,7 @@ package commands;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
-import utils.Client;
+import network.Client;
 import utils.UserInterface;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,14 +18,14 @@ public class Info extends Command{
     }
 
 
-    @XmlRootElement(name="Data")
+    @XmlRootElement(name="Response")
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Data {
+    public class Response {
         private String type;
         private Integer count;
         private ZonedDateTime date;
 
-        Data(String t, Integer c, ZonedDateTime d){
+        Response(String t, Integer c, ZonedDateTime d){
             type = t;
             count = c;
             date = d;
@@ -34,9 +34,10 @@ public class Info extends Command{
 
     @Override
     public void execute(UserInterface cli, Client client, String[] args) throws IOException {
-        String resp = client.sendMessage("info");
         XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
-        Data parsed = (Data) xstream.fromXML(resp);
+        String resp = client.sendMessage("info");
+        Response parsed = (Response) xstream.fromXML(resp);
+
         cli.writeln("Storage type: "+parsed.type);
         cli.writeln("Elements count: "+parsed.count);
         cli.writeln("Creation date: "+parsed.date);

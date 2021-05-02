@@ -1,6 +1,6 @@
 package commands;
 
-import utils.Client;
+import network.Client;
 import utils.UserInterface;
 import java.io.IOException;
 

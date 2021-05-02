@@ -1,5 +1,7 @@
 package network;
-import commands.Command;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+import commands.Clear;
 import utils.*;
 import java.io.*;
 import java.net.*;
@@ -52,15 +54,18 @@ public class Server {
                         sc.configureBlocking(false);
                         ByteBuffer bb = ByteBuffer.allocate(1024);
                         sc.read(bb);
-                        String result = new String(bb.array()).trim();
-                        if (result.length() <= 0) {
-                            System.out.println(result);
+                        String rawString = new String(bb.array()).trim();
+
+                        if (rawString.length() <= 0) {
+                            System.out.println(rawString);
                             sc.close();
                             System.out.println("Connection closed...");
                         } else {
                             bb.flip();
                             try {
-                                String payload = cmdManager.executeCommand(storage, result);
+                                XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
+                                Message parsed = (Message) xstream.fromXML(rawString);
+                                String payload = cmdManager.executeCommand(storage, parsed.command, parsed.data);
                                 System.out.printf("Payload: %s\n", payload);
                                 sc.write(ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8)));
                             } catch (Exception e) {
@@ -68,7 +73,7 @@ public class Server {
                                 sc.write(enc.encode(CharBuffer.wrap("Command execution failed: " + e.toString())));
                             }
                             sc.write(enc.encode(CharBuffer.wrap("\n")));
-                            System.out.println("msg: " + result + "\nlen: " + result.length());
+                            System.out.println("msg: " + rawString + "\nlen: " + rawString.length());
                         }
                     }
                 }

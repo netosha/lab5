@@ -1,4 +1,5 @@
 import exceptions.*;
+import network.Client;
 import utils.*;
 
 import java.io.*;

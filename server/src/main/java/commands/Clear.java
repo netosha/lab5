@@ -31,13 +31,8 @@ public class Clear extends Command{
     }
 
     @Override
-    public String execute(Storage storage, String[] args) throws IOException {
-        if(args.length != 0){
-            throw new InvalidParamsCount("");
-        }
-
+    public String execute(Storage storage, Object data) throws IOException {
         storage.clear();
-
         Data payload = new Data("Storage successfully cleared");
         XStream xstream = new XStream(new StaxDriver());
         return xstream.toXML(payload);
@@ -46,12 +41,7 @@ public class Clear extends Command{
 
     @Override
     public void execute(UserInterface cli, Storage storage, String[] args) {
-        if(args.length != 0){
-            throw new InvalidParamsCount("");
-        }
-
         storage.clear();
-
         cli.writeln("Storage successfully cleared");
     }
 

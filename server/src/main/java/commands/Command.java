@@ -12,7 +12,7 @@ public abstract class Command {
 
     public abstract void execute(UserInterface cli, Storage storage, String[] args) throws IOException;
 
-    public abstract String execute(Storage storage, String[] args) throws IOException;
+    public abstract String execute(Storage storage, Object data) throws IOException;
 
     public String getCommand() {
         return command;

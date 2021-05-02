@@ -13,6 +13,7 @@ public class CommandsManager {
     public CommandsManager() {
         addCommand(new Info());
         addCommand(new Clear());
+        addCommand(new Show());
 
     }
 
@@ -21,12 +22,11 @@ public class CommandsManager {
     }
 
 
-    public String executeCommand(Storage storage, String commandString) throws NoSuchCommandException, IOException {
+    public String executeCommand(Storage storage, String commandString, Object data) throws NoSuchCommandException, IOException {
         try{
             String[] parsedCommandString = commandString.split(" ");
             Command command = getCommand(parsedCommandString[0]);
-            String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
-            return command.execute(storage, args);
+            return command.execute(storage, data);
         }catch (NoSuchElementException e){
             System.out.println("No such command");
             return new String("No such command");

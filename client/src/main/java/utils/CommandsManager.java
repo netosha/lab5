@@ -1,6 +1,7 @@
 package utils;
 import commands.*;
 import exceptions.NoSuchCommandException;
+import network.Client;
 
 import java.io.IOException;
 import java.util.*;
@@ -14,6 +15,8 @@ public class CommandsManager {
     public CommandsManager() {
         addCommand(new Info());
         addCommand(new Clear());
+        addCommand(new Insert());
+        addCommand(new Show());
 
     }
 
@@ -21,7 +24,7 @@ public class CommandsManager {
         commands.put(cmd.getCommand(), cmd);
     }
 
-    public void executeCommand(UserInterface cli, Client client,  String commandString) throws IOException {
+    public void executeCommand(UserInterface cli, Client client, String commandString) throws IOException {
         try{
             String[] parsedCommandString = commandString.split(" ");
             Command command = getCommand(parsedCommandString[0]);
