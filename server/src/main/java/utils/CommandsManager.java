@@ -7,7 +7,7 @@ import java.util.*;
 
 
 public class CommandsManager {
-    private Map<String, Command> commands = new LinkedHashMap<String, Command>();
+    private Map<String, Command> commands = new LinkedHashMap<>();
 
 
     public CommandsManager() {
@@ -22,6 +22,9 @@ public class CommandsManager {
         addCommand(new FilterLessThanStudentsCount());
         addCommand(new MinById());
         addCommand(new RemoveGreater());
+        addCommand(new RemoveLower());
+        addCommand(new RemoveGreaterKey());
+        addCommand(new RemoveKey());
     }
 
     private void addCommand(Command cmd) {
@@ -36,7 +39,7 @@ public class CommandsManager {
             return command.execute(storage, data);
         }catch (NoSuchElementException e){
             System.out.println("No such command");
-            return new String("No such command");
+            return "No such command";
         }catch (Exception e){
             e.printStackTrace();
             throw e;
@@ -51,8 +54,6 @@ public class CommandsManager {
             command.execute(cli, storage, args);
         }catch (NoSuchElementException e){
             System.out.println("No such command");
-        }catch (Exception e){
-            throw e;
         }
     }
 
@@ -70,7 +71,7 @@ public class CommandsManager {
     }
 
     public List<Command> getAllCommands() {
-        return new ArrayList<Command>(commands.values());
+        return new ArrayList<>(commands.values());
     }
 }
 

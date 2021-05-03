@@ -8,7 +8,7 @@ import java.util.*;
 
 
 public class CommandsManager {
-    private Map<String, Command> commands = new LinkedHashMap<String, Command>();
+    private Map<String, Command> commands = new LinkedHashMap<>();
 
 
     // Change
@@ -23,6 +23,11 @@ public class CommandsManager {
         addCommand(new FilterLessThanStudentsCount());
         addCommand(new MinById());
         addCommand(new RemoveGreater());
+        addCommand(new RemoveLower());
+        addCommand(new RemoveGreaterKey());
+        addCommand(new RemoveKey());
+        addCommand(new Exit());
+        addCommand(new ExecuteScript());
     }
 
     private void addCommand(Command cmd) {
@@ -37,8 +42,6 @@ public class CommandsManager {
             command.execute(cli, client, args);
         }catch (NoSuchCommandException e){
             System.out.println("No behaviour found for this command. Here raw server response");
-        }catch (Exception e){
-            throw e;
         }
 
     }
@@ -57,7 +60,7 @@ public class CommandsManager {
     }
 
     public List<Command> getAllCommands() {
-        return new ArrayList<Command>(commands.values());
+        return new ArrayList<>(commands.values());
     }
 }
 

@@ -21,8 +21,8 @@ public class Main {
         );
 
         // Parse args
-        if(args.length > 0){
-            try{
+        if (args.length > 0) {
+            try {
                 File file = new File(args[0]);
                 FileInputStream fis = new FileInputStream(file);
                 BufferedInputStream bis = new BufferedInputStream(fis);
@@ -31,25 +31,27 @@ public class Main {
                 XStream xstream = new XStream(new DomDriver());
                 xstream.alias("storage", Storage.class);
                 storage = (Storage) xstream.fromXML(lines);
-                cli.writeln("Storage loaded from "+file.getAbsolutePath().toString());
-            }
-            catch (FileNotFoundException e)
-            {
+                cli.writeln("Storage loaded from " + file.getAbsolutePath());
+            } catch (FileNotFoundException e) {
                 cli.writeln("Failed to load dump from file");
             }
         }
 
         Storage finalStorage = storage;
-        Runnable task = () -> {
-            Server.main(cmdManager, finalStorage, 8080);
-        };
+        Runnable task = () -> Server.main(cmdManager, finalStorage, 8080);
+
+
+        // On exit hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                cmdManager.executeCommand(cli, finalStorage, "save");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }));
 
         Thread thread = new Thread(task);
         thread.start();
-
-        Writer writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8);
-        Scanner scanner = new Scanner(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-        System.out.println("Console unlocked");
 
         while (true) {
             if (cli.hasNextLine()) {
