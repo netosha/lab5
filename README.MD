@@ -56,10 +56,11 @@ exit - Close program (without save in file)
 
 ## Usage
 
-This is a small example of interaction with the program
+In `examples` folder you can check how typical script looks like
 
+This is a small example of interaction with the program _(via a client)_
 ```
-execute_script examples/script
+execute_script script
 show
 info
 ```
