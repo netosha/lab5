@@ -30,8 +30,8 @@ public class Clear extends Command {
     public void execute(UserInterface cli, Client client, String[] args) throws IOException {
         String resp = client.sendMessage("clear");
         XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
-        Response parsed = (Response) xstream.fromXML(resp);
-        cli.writeln(parsed.message);
+        Response response = (Response) xstream.fromXML(resp);
+        cli.writeln(response.message);
     }
 
 

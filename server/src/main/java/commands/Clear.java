@@ -13,29 +13,27 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 
 
-public class Clear extends Command{
-    public Clear(){
+public class Clear extends Command {
+    public Clear() {
         command = "clear";
         helpText = "Cleans storage";
     }
 
-    @XmlRootElement(name="Data")
+    @XmlRootElement(name = "Response")
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Data {
+    public class Response {
         private String message;
 
-        Data(String m){
+        Response(String m) {
             message = m;
-
         }
     }
 
     @Override
     public String execute(Storage storage, Object data) throws IOException {
         storage.clear();
-        Data payload = new Data("Storage successfully cleared");
         XStream xstream = new XStream(new StaxDriver());
-        return xstream.toXML(payload);
+        return xstream.toXML(new Response("Storage successfully cleared"));
     }
 
 
@@ -44,6 +42,5 @@ public class Clear extends Command{
         storage.clear();
         cli.writeln("Storage successfully cleared");
     }
-
 
 }

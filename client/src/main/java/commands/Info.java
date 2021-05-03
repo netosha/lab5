@@ -36,10 +36,10 @@ public class Info extends Command{
     public void execute(UserInterface cli, Client client, String[] args) throws IOException {
         XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
         String resp = client.sendMessage("info");
-        Response parsed = (Response) xstream.fromXML(resp);
+        Response response = (Response) xstream.fromXML(resp);
 
-        cli.writeln("Storage type: "+parsed.type);
-        cli.writeln("Elements count: "+parsed.count);
-        cli.writeln("Creation date: "+parsed.date);
+        cli.writeln("Storage type: "+response.type);
+        cli.writeln("Elements count: "+response.count);
+        cli.writeln("Creation date: "+response.date);
     }
 }

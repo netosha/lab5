@@ -33,9 +33,9 @@ public class Show extends Command {
     public void execute(UserInterface cli, Client client, String[] args) throws IOException {
         XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
         String resp = client.sendMessage("show");
-        Response parsed = (Response) xstream.fromXML(resp);
+        Response response = (Response) xstream.fromXML(resp);
 
-        cli.writeln(parsed.storage.toString());
+        cli.writeln(response.storage.toString());
 
     }
 }

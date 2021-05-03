@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
-import utils.CommandsManager;
 import utils.Storage;
 import utils.UserInterface;
 
@@ -78,10 +77,9 @@ public class Insert extends Command{
         Request parsed = (Request) data;
         String key = parsed.key;
         StudyGroup studyGroup = parsed.studyGroup;
-        Response payload = new Response("Item added successfully");
 
         if(storage.getStudyGroups().containsKey(key)){
-            payload = new Response("Key already exists");
+            return xstream.toXML( new Response("Key already exists"));
         }
 
         Integer id = Integer.MIN_VALUE;
@@ -98,6 +96,6 @@ public class Insert extends Command{
         studyGroup.setId(id);
         storage.put(key, studyGroup);
 
-        return xstream.toXML(payload);
+        return xstream.toXML(new Response("Item added successfully"));
     }
 }

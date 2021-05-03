@@ -14,29 +14,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Insert extends Command {
-    public Insert() {
-        command = "insert";
-        helpText = "Adds new StudyGroup to storage by provied key";
+public class Update extends Command {
+    public Update() {
+        command = "update";
+        helpText = "Updates storage StudyGroup by provied id";
     }
 
-
-    @XmlRootElement(name="Request")
+    @XmlRootElement(name = "Request")
     @XmlAccessorType(XmlAccessType.FIELD)
     public class Request {
-        private String key;
+        private Integer id;
         private StudyGroup studyGroup;
-        Request(String k, StudyGroup sg){
-            key = k;
+
+        Request(Integer i, StudyGroup sg) {
+            id = i;
             studyGroup = sg;
         }
     }
 
-    @XmlRootElement(name="Response")
+    @XmlRootElement(name = "Response")
     @XmlAccessorType(XmlAccessType.FIELD)
     public class Response {
         private String message;
-        Response(String m){
+
+        Response(String m) {
             message = m;
         }
     }
@@ -46,22 +47,13 @@ public class Insert extends Command {
         if (args.length != 1) {
             throw new InvalidParamsCount("");
         }
-        String key = args[0];
-        // Checks maxID to prevent collision
-        Integer id = Integer.MIN_VALUE;
-        // In case if storage are empty;
-        if (id == Integer.MIN_VALUE) {
-            id = 0;
-        } else {
-            id += 1;
-        }
 
+        Integer id = Integer.parseInt(args[0]);
         StudyGroup studyGroup = cli.readStudyGroup();
         XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
-        String resp = client.sendMessage("insert", new Request(key, studyGroup));
+        String resp = client.sendMessage("update", new Request(id, studyGroup));
         Response response = (Response) xstream.fromXML(resp);
         cli.writeln(response.message);
-
     }
 
 }

@@ -35,8 +35,7 @@ public class Show extends Command {
 
     @Override
     public String execute(Storage storage, Object data) throws IOException {
-        Response payload = new Response(storage);
         XStream xstream = new XStream(new StaxDriver());
-        return xstream.toXML(payload);
+        return xstream.toXML(new Response(storage));
     }
 }

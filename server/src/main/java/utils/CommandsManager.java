@@ -14,6 +14,8 @@ public class CommandsManager {
         addCommand(new Info());
         addCommand(new Clear());
         addCommand(new Show());
+        addCommand(new Insert());
+        addCommand(new Update());
 
     }
 
