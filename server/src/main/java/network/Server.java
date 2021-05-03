@@ -1,8 +1,10 @@
 package network;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import commands.Clear;
 import utils.*;
+
 import java.io.*;
 import java.net.*;
 import java.nio.*;
@@ -89,6 +91,17 @@ public class Server {
         serverSocketChannel.bind(new InetSocketAddress("localhost", port));
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         System.out.printf("server started on localhost:%s%n", port);
+    }
+
+    public static void main(CommandsManager cmdManager, Storage storage, int port) {
+        try {
+            Server server = new Server(cmdManager, storage);
+            server.start(port);
+            server.listen();
+        } catch (Exception e) {
+            System.out.printf("Error while server creating: %s%n", e.getMessage());
+            System.exit(1);
+        }
     }
 
     public void stop() {

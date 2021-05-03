@@ -46,18 +46,7 @@ public class Main {
 
         Storage finalStorage = storage;
         Integer finalPort = port;
-
-        Runnable task = () -> {
-            try {
-                Server server = new Server(cmdManager, finalStorage);
-                server.start(finalPort);
-                server.listen();
-            } catch (IOException e) {
-                cli.writeln(String.format("Error while server creating: %s", e.getMessage()));
-                e.printStackTrace();
-                System.exit(1);
-            }
-        };
+        Runnable task = () -> Server.main(cmdManager, finalStorage, finalPort);
         Thread thread = new Thread(task);
         thread.start();
 
