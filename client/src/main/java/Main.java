@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
         CommandsManager cmdManager = new CommandsManager();
         UserInterface cli = new UserInterface(
                 new InputStreamReader(System.in, StandardCharsets.UTF_8),
@@ -28,6 +28,9 @@ public class Main {
                     cmdManager.executeCommand(cli, client, cmd);
                 } catch (java.util.NoSuchElementException e) {
                     cli.writeln("Invalid script");
+                }catch (NetworkException e){
+                    cli.writeln("Connection lost. Trying connect again");
+                    client.connect(port);
                 }
                 catch (NoSuchCommandException e) {
                     cli.writeln(String.format("Command %s not found", e.getMessage()));

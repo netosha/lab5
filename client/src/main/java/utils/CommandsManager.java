@@ -1,6 +1,7 @@
 package utils;
 
 import commands.*;
+import exceptions.NetworkException;
 import exceptions.NoSuchCommandException;
 import network.Client;
 
@@ -39,7 +40,11 @@ public class CommandsManager {
         String[] parsedCommandString = commandString.split(" ");
         Command command = getCommand(parsedCommandString[0]);
         String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
-        command.execute(cli, client, args);
+        try{
+            command.execute(cli, client, args);
+        }catch (NullPointerException e){
+            throw new NetworkException("Connection lost");
+        }
     }
 
     /**
