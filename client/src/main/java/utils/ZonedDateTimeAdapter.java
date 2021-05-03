@@ -7,7 +7,6 @@ public class ZonedDateTimeAdapter extends XmlAdapter<String, ZonedDateTime> {
     public ZonedDateTime unmarshal(String v) throws Exception {
         ZonedDateTime tmp;
         tmp = ZonedDateTime.parse(v);
-        System.out.printf(v+"no issues");
         return ZonedDateTime.parse(v);
     }
 

@@ -22,7 +22,7 @@ public class Client {
         Message message = new Message(command, "");
         XStream xstream = new XStream(new StaxDriver());
         String req = xstream.toXML(message);
-        System.out.println(req);
+//        System.out.println(req);
         out.println(req);
         String resp = in.readLine();
         return resp;
@@ -33,7 +33,7 @@ public class Client {
         Message message = new Message(command, data);
         XStream xstream = new XStream(new StaxDriver());
         String req = xstream.toXML(message);
-        System.out.println(req);
+//        System.out.println(req);
         out.println(req);
         String resp = in.readLine();
         return resp;

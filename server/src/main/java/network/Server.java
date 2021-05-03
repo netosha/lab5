@@ -57,7 +57,7 @@ public class Server {
                         String rawString = new String(bb.array()).trim();
 
                         if (rawString.length() <= 0) {
-                            System.out.println(rawString);
+//                            System.out.println(rawString);
                             sc.close();
                             System.out.println("Connection closed...");
                         } else {
