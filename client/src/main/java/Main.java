@@ -8,13 +8,18 @@ import java.nio.charset.StandardCharsets;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Client client = new Client();
-        client.connect();
         CommandsManager cmdManager = new CommandsManager();
         UserInterface cli = new UserInterface(
                 new InputStreamReader(System.in, StandardCharsets.UTF_8),
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
+        Integer port = null;
+        do {
+            port = cli.readIntWithMessage("Provide port to connect (0 < port < 65535)");
+        } while (port < 0 && port > 65535);
+
+        Client client = new Client();
+        client.connect(port);
 
         while (true) {
             if (cli.hasNextLine()) {

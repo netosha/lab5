@@ -86,9 +86,9 @@ public class Server {
     public void start(int port) throws IOException {
         serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.configureBlocking(false);
-        serverSocketChannel.bind(new InetSocketAddress("localhost", 8080));
+        serverSocketChannel.bind(new InetSocketAddress("localhost", port));
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-        System.out.println("server started on localhost:8080");
+        System.out.printf("server started on localhost:%s%n", port);
     }
 
     public void stop() {
@@ -97,17 +97,6 @@ public class Server {
             out.close();
             clientSocket.close();
             serverSocket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void main(CommandsManager cmdManager, Storage storage, int port) {
-        try {
-            Server server = new Server(cmdManager, storage);
-            server.start(port);
-            server.listen();
         } catch (Exception e) {
             e.printStackTrace();
         }
