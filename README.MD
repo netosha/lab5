@@ -11,7 +11,7 @@ This project contains 2 parts: `server` and `client`.
 ```
 cd client
 mvn install
-java -jar target/server-*-jar-with-dependencies.jar
+java -jar target/client-*-jar-with-dependencies.jar
 ```
 
 ### Server
