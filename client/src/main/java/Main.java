@@ -23,12 +23,15 @@ public class Main {
                     cmdManager.executeCommand(cli, client, cmd);
                 } catch (java.util.NoSuchElementException e) {
                     cli.writeln("Invalid script");
-                } catch (InvalidInputException e) {
+                }
+                catch (NoSuchCommandException e) {
+                    cli.writeln(String.format("Command %s not found", e.getMessage()));
+                }catch (InvalidInputException e) {
                     cli.writeln("Wrong data provided: " + e.getMessage());
                 } catch (InvalidParamsCount e) {
                     cli.writeln("Invalid params count provided");
                 } catch (FileNotFoundException e) {
-                    cli.writeln("File not found (or you dont have permisions to read file)");
+                    cli.writeln("File not found (or you dont have permissions to read file)");
                 } catch (AbortCommandException e) {
                     cli.writeln(e.getMessage());
                 } catch (IOException e) {
@@ -36,10 +39,5 @@ public class Main {
                 }
             }
         }
-//        while (true) {
-//            if(scanner.hasNextLine()){
-//                String msg = client.sendMessage(scanner.nextLine());
-//                System.out.println(msg);
-//            }
     }
 }

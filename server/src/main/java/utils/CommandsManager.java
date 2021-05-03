@@ -1,4 +1,5 @@
 package utils;
+
 import commands.*;
 import exceptions.NoSuchCommandException;
 
@@ -33,32 +34,29 @@ public class CommandsManager {
 
 
     public String executeCommand(Storage storage, String commandString, Object data) throws NoSuchCommandException, IOException {
-        try{
+        try {
             String[] parsedCommandString = commandString.split(" ");
             Command command = getCommand(parsedCommandString[0]);
             return command.execute(storage, data);
-        }catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println("No such command");
             return "No such command";
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
     }
 
-    public void executeCommand(UserInterface cli, Storage storage, String commandString) throws Exception {
-        try{
-            String[] parsedCommandString = commandString.split(" ");
-            Command command = getCommand(parsedCommandString[0]);
-            String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
-            command.execute(cli, storage, args);
-        }catch (NoSuchElementException e){
-            System.out.println("No such command");
-        }
+    public void executeCommand(UserInterface cli, Storage storage, String commandString) throws IOException {
+        String[] parsedCommandString = commandString.split(" ");
+        Command command = getCommand(parsedCommandString[0]);
+        String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
+        command.execute(cli, storage, args);
     }
 
     /**
      * Return string by name
+     *
      * @param cmd string
      * @return Command
      * @throws NoSuchCommandException if command not found

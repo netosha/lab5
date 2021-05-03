@@ -58,6 +58,21 @@ public class Main {
                 String cmd = cli.read();
                 try {
                     cmdManager.executeCommand(cli, storage, cmd);
+                } catch (java.util.NoSuchElementException e) {
+                    cli.writeln("Invalid script");
+                }
+                catch (NoSuchCommandException e) {
+                    cli.writeln(String.format("Command %s not found", e.getMessage()));
+                }catch (InvalidInputException e) {
+                    cli.writeln("Wrong data provided: " + e.getMessage());
+                } catch (InvalidParamsCount e) {
+                    cli.writeln("Invalid params count provided");
+                } catch (FileNotFoundException e) {
+                    cli.writeln("File not found (or you dont have permissions to read file)");
+                } catch (AbortCommandException e) {
+                    cli.writeln(e.getMessage());
+                } catch (IOException e) {
+                    cli.writeln("Unknown exception");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
