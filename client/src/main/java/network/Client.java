@@ -40,9 +40,8 @@ public class Client {
 
     }
 
-    public void connect() throws InterruptedException {
+    public void connect(Integer port) throws InterruptedException {
         String host = "localhost";
-        Integer port = 8080;
         do{
             try{
                 startConnection(host, port);
@@ -55,8 +54,6 @@ public class Client {
                 e.printStackTrace();
             }
         }while (true);
-
-        return;
     }
 
     public void stopConnection() throws IOException {

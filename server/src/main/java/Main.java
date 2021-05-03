@@ -20,6 +20,13 @@ public class Main {
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
 
+        Integer port = null;
+
+        do {
+            port = cli.readIntWithMessage("Provide port to run (0 < port < 65535)");
+        } while (port < 0 && port > 65535);
+
+
         // Parse args
         if (args.length > 0) {
             try {
@@ -38,8 +45,21 @@ public class Main {
         }
 
         Storage finalStorage = storage;
-        Runnable task = () -> Server.main(cmdManager, finalStorage, 8080);
+        Integer finalPort = port;
 
+        Runnable task = () -> {
+            try {
+                Server server = new Server(cmdManager, finalStorage);
+                server.start(finalPort);
+                server.listen();
+            } catch (IOException e) {
+                cli.writeln(String.format("Error while server creating: %s", e.getMessage()));
+                e.printStackTrace();
+                System.exit(1);
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
 
         // On exit hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -50,8 +70,7 @@ public class Main {
             }
         }));
 
-        Thread thread = new Thread(task);
-        thread.start();
+
 
         while (true) {
             if (cli.hasNextLine()) {
