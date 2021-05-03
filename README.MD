@@ -11,16 +11,29 @@ This project contains 2 parts: `server` and `client`.
 ```
 cd client
 mvn install
-java -jar target/client-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/server-*-jar-with-dependencies.jar
 ```
 
 ### Server
 ```
 cd server
 mvn install
-java -jar target/server-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/server-*-jar-with-dependencies.jar
 ```
 
+
+## Run on helios
+
+
+### Server
+```
+java -jar /home/s283808/lab5/server-*-jar-with-dependencies.jar
+```
+
+### Client
+```
+java -jar /home/s283808/lab5/client-*-jar-with-dependencies.jar
+```
 
 ## Commands
 
