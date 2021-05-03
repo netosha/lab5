@@ -1,44 +1,43 @@
+import exceptions.*;
+import network.Client;
+import utils.*;
+
 import java.io.*;
-import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
-
-
-class Client {
-    private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
-
-    public void startConnection(String ip, int port) throws IOException {
-        clientSocket = new Socket(ip, port);
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    }
-
-    public String sendMessage(String msg) throws IOException {
-        out.println(msg);
-        String resp = in.readLine();
-        return resp;
-    }
-
-    public void stopConnection() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
-    }
-}
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Client client = new Client();
-        client.startConnection("localhost", 8080);
+        client.connect();
+        CommandsManager cmdManager = new CommandsManager();
+        UserInterface cli = new UserInterface(
+                new InputStreamReader(System.in, StandardCharsets.UTF_8),
+                new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
+        );
 
-        Scanner scanner = new Scanner(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-        Writer out = new OutputStreamWriter(System.out, StandardCharsets.UTF_8);
-        while (scanner.hasNext()) {
-            String response = client.sendMessage(scanner.nextLine());
-            System.out.println(response);
+        while (true) {
+            if (cli.hasNextLine()) {
+                String cmd = cli.read();
+                try {
+                    cmdManager.executeCommand(cli, client, cmd);
+                } catch (java.util.NoSuchElementException e) {
+                    cli.writeln("Invalid script");
+                }
+                catch (NoSuchCommandException e) {
+                    cli.writeln(String.format("Command %s not found", e.getMessage()));
+                }catch (InvalidInputException e) {
+                    cli.writeln("Wrong data provided: " + e.getMessage());
+                } catch (InvalidParamsCount e) {
+                    cli.writeln("Invalid params count provided");
+                } catch (FileNotFoundException e) {
+                    cli.writeln("File not found (or you dont have permissions to read file)");
+                } catch (AbortCommandException e) {
+                    cli.writeln(e.getMessage());
+                } catch (IOException e) {
+                    cli.writeln("Unknown exception");
+                }
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 <storage>
-  <creationDate>2020-09-29T10:15:07.582+03:00[Europe/Moscow]</creationDate>
+  <creationDate>2021-05-03T16:35:28.88+03:00[Europe/Moscow]</creationDate>
   <studyGroups class="linked-hash-map">
     <entry>
       <string>0</string>
@@ -10,7 +10,7 @@
           <x>1</x>
           <y>1</y>
         </coordinates>
-        <creationDate>2021-04-18T15:11:51.879+03:00[Europe/Moscow]</creationDate>
+        <creationDate>2021-05-03T17:08:50.096+03:00[Europe/Moscow]</creationDate>
         <studentsCount>44</studentsCount>
         <formOfEducation>DISTANCE_EDUCATION</formOfEducation>
         <semesterEnum>SECOND</semesterEnum>
@@ -31,7 +31,7 @@
           <x>1</x>
           <y>1</y>
         </coordinates>
-        <creationDate>2021-04-18T15:11:51.88+03:00[Europe/Moscow]</creationDate>
+        <creationDate>2021-05-03T17:08:50.111+03:00[Europe/Moscow]</creationDate>
         <studentsCount>100</studentsCount>
         <formOfEducation>DISTANCE_EDUCATION</formOfEducation>
         <semesterEnum>SECOND</semesterEnum>
@@ -52,7 +52,7 @@
           <x>1</x>
           <y>1</y>
         </coordinates>
-        <creationDate>2021-04-18T15:11:51.882+03:00[Europe/Moscow]</creationDate>
+        <creationDate>2021-05-03T17:08:50.124+03:00[Europe/Moscow]</creationDate>
         <studentsCount>100</studentsCount>
         <formOfEducation>DISTANCE_EDUCATION</formOfEducation>
         <semesterEnum>SECOND</semesterEnum>

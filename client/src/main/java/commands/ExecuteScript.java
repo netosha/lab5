@@ -2,6 +2,7 @@ package commands;
 
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
+import network.Client;
 import utils.CommandsManager;
 import utils.Storage;
 import utils.UserInterface;
@@ -18,16 +19,17 @@ public class ExecuteScript extends Command{
         helpText = "Execute commands from file";
     }
 
+
     @Override
-    public void execute(UserInterface cli, Storage storage, String[] args) {
+    public void execute(UserInterface cli, Client client, String[] args) throws IOException {
         if(args.length != 1){
             throw new InvalidParamsCount("");
         }
         File file = new File(args[0]);
         FileInputStream fis = null;
         BufferedInputStream bis = null;
-        BufferedReader r = null;
-        Scanner scanner = null;
+        BufferedReader r;
+        Scanner scanner;
 
         try {
             fis = new FileInputStream(file);
@@ -46,7 +48,7 @@ public class ExecuteScript extends Command{
 
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
-                cmdManager.executeCommand(cmdCli, storage, line);
+                cmdManager.executeCommand(cmdCli, client, line);
             }
         } catch (FileNotFoundException e) {
             throw new InvalidInputException("File not found");
@@ -64,7 +66,6 @@ public class ExecuteScript extends Command{
         }
     }
 }
-
 
 
 

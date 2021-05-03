@@ -1,17 +1,14 @@
 package utils;
-import commands.*;
-import collection.*;
-import java.time.*;
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.*;
-import java.security.InvalidKeyException;
+
+import collection.StudyGroup;
+
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 
 public class Storage {
-    private java.time.ZonedDateTime creationDate;
+    private ZonedDateTime creationDate;
     private Map<String, StudyGroup> studyGroups = new LinkedHashMap<String, StudyGroup>();
 
     public Storage(){
@@ -31,6 +28,9 @@ public class Storage {
         studyGroups.remove(getKey(studyGroups, o));
     }
 
+
+    // Returns value key of map
+    // Analog of Array.prototype.findIndex() in JS
     private  <K, V> K getKey(Map<K, V> map, V value) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
             if (entry.getValue().equals(value)) {

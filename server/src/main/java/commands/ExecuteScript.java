@@ -12,22 +12,22 @@ import java.util.Scanner;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class ExecuteScript extends Command{
-    public ExecuteScript(){
+public class ExecuteScript extends Command {
+    public ExecuteScript() {
         command = "execute_script";
         helpText = "Execute commands from file";
     }
 
     @Override
-    public void execute(UserInterface cli, Storage storage, String[] args) {
-        if(args.length != 1){
+    public void execute(UserInterface cli, Storage storage, String[] args) throws IOException {
+        if (args.length != 1) {
             throw new InvalidParamsCount("");
         }
         File file = new File(args[0]);
         FileInputStream fis = null;
         BufferedInputStream bis = null;
-        BufferedReader r = null;
-        Scanner scanner = null;
+        BufferedReader r;
+        Scanner scanner;
 
         try {
             fis = new FileInputStream(file);
@@ -52,8 +52,9 @@ public class ExecuteScript extends Command{
             throw new InvalidInputException("File not found");
         } catch (IOException e) {
             e.printStackTrace();
+            throw e;
         } finally {
-            if(fis != null && bis!= null){
+            if (fis != null && bis != null) {
                 try {
                     fis.close();
                     bis.close();
@@ -63,8 +64,13 @@ public class ExecuteScript extends Command{
             }
         }
     }
-}
 
+    // Only server-side command
+    @Override
+    public String execute(Storage storage, Object data) throws IOException {
+        return null;
+    }
+}
 
 
 

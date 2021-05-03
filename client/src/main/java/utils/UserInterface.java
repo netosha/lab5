@@ -296,7 +296,7 @@ public class UserInterface {
                 person = readPerson();
                 return new StudyGroup(name, coordinates, studentsCount, formOfEducation, semester, person);
             } catch (AbortCommandException e) {
-                throw new AbortCommandException("Command abroted");
+                throw new AbortCommandException("Command aborted");
             } catch (Exception e) {
                 throw new InvalidInputException(e.getMessage());
             }
