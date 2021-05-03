@@ -11,6 +11,7 @@ public class CommandsManager {
 
 
     public CommandsManager() {
+        addCommand(new Help());
         addCommand(new Info());
         addCommand(new Clear());
         addCommand(new Show());
@@ -20,6 +21,7 @@ public class CommandsManager {
         addCommand(new SumOfStudentsCount());
         addCommand(new FilterLessThanStudentsCount());
         addCommand(new MinById());
+        addCommand(new RemoveGreater());
     }
 
     private void addCommand(Command cmd) {

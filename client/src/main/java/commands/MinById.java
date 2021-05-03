@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 public class MinById extends Command{
     public MinById(){
         command = "min_by_id";
-        helpText = "Show Study Group with lowest id";
+        helpText = "Show study group with lowest id";
     }
 
 
