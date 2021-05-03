@@ -18,7 +18,9 @@ public class CommandsManager {
         addCommand(new Insert());
         addCommand(new Show());
         addCommand(new Update());
-
+        addCommand(new SumOfStudentsCount());
+        addCommand(new FilterLessThanStudentsCount());
+        addCommand(new MinById());
     }
 
     private void addCommand(Command cmd) {

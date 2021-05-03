@@ -1,3 +1,5 @@
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import exceptions.*;
 import network.*;
 import utils.*;
@@ -5,23 +7,41 @@ import utils.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 
 public class Main {
     public static void main(String[] args) {
-
-
         utils.CommandsManager cmdManager = new utils.CommandsManager();
         Storage storage = new Storage();
 
-        // Init user cli
         UserInterface cli = new UserInterface(
                 new InputStreamReader(System.in, StandardCharsets.UTF_8),
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
 
+        // Parse args
+        if(args.length > 0){
+            try{
+                File file = new File(args[0]);
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                BufferedReader r = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8));
+                String lines = r.lines().collect(Collectors.joining());
+                XStream xstream = new XStream(new DomDriver());
+                xstream.alias("storage", Storage.class);
+                storage = (Storage) xstream.fromXML(lines);
+                cli.writeln("Storage loaded from "+file.getAbsolutePath().toString());
+            }
+            catch (FileNotFoundException e)
+            {
+                cli.writeln("Failed to load dump from file");
+            }
+        }
+
+        Storage finalStorage = storage;
         Runnable task = () -> {
-            Server.main(cmdManager, storage, 8080);
+            Server.main(cmdManager, finalStorage, 8080);
         };
 
         Thread thread = new Thread(task);
