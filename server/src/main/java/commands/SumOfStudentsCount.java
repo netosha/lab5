@@ -3,6 +3,7 @@ package commands;
 import collection.StudyGroup;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import utils.CommandsManager;
@@ -44,6 +45,9 @@ public class SumOfStudentsCount extends Command {
     public String execute(Storage storage, Object data) throws IOException {
         long sum = storage.getStudyGroups().values().stream().mapToLong(StudyGroup::getStudentsCount).sum();
         XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         return xstream.toXML(new Response(sum));
     }
 }

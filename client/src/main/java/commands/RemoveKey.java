@@ -2,6 +2,7 @@ package commands;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import network.Client;
@@ -43,6 +44,8 @@ public class RemoveKey extends Command{
     @Override
     public void execute(UserInterface cli, Client client, String[] args) throws IOException {
         XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
 
         if (args.length != 1) {
             throw new InvalidParamsCount("");

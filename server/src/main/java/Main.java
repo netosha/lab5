@@ -1,5 +1,6 @@
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import exceptions.*;
 import network.*;
 import utils.*;
@@ -20,11 +21,16 @@ public class Main {
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
 
-        Integer port = null;
+        Integer port = 0;
 
         do {
-            port = cli.readIntWithMessage("Provide port to run (0 < port < 65535)");
-        } while (port < 0 && port > 65535);
+            try{
+                port = cli.readIntWithMessage("Provide port to run (0 < port < 65535)");
+            }catch (Exception e){
+                cli.writeln(String.format("Wrong data provided: %s", e.getMessage()));
+                System.exit(1);
+            }
+        } while (port <= 0 || port > 65535);
 
 
         // Parse args
@@ -35,8 +41,12 @@ public class Main {
                 BufferedInputStream bis = new BufferedInputStream(fis);
                 BufferedReader r = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8));
                 String lines = r.lines().collect(Collectors.joining());
+
                 XStream xstream = new XStream(new DomDriver());
+                xstream.addPermission(NoTypePermission.NONE);
+                xstream.allowTypesByRegExp(new String[]{".*"});
                 xstream.alias("storage", Storage.class);
+
                 storage = (Storage) xstream.fromXML(lines);
                 cli.writeln("Storage loaded from " + file.getAbsolutePath());
             } catch (FileNotFoundException e) {
@@ -80,7 +90,7 @@ public class Main {
                 } catch (AbortCommandException e) {
                     cli.writeln(e.getMessage());
                 } catch (IOException e) {
-                    cli.writeln("Unknown exception");
+                    cli.writeln(String.format("Unknown exception %s", e.getMessage()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

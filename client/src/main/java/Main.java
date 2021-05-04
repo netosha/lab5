@@ -13,10 +13,17 @@ public class Main {
                 new InputStreamReader(System.in, StandardCharsets.UTF_8),
                 new OutputStreamWriter(System.out, StandardCharsets.UTF_8)
         );
-        Integer port = null;
+
+        Integer port = 0;
+
         do {
-            port = cli.readIntWithMessage("Provide port to connect (0 < port < 65535)");
-        } while (port < 0 && port > 65535);
+            try{
+                port = cli.readIntWithMessage("Provide port to connect (0 < port < 65535)");
+            }catch (Exception e){
+                cli.writeln(String.format("Wrong data provided: %s", e.getMessage()));
+                System.exit(1);
+            }
+        } while (port <= 0 || port > 65535);
 
         Client client = new Client();
         client.connect(port);
@@ -43,7 +50,7 @@ public class Main {
                 } catch (AbortCommandException e) {
                     cli.writeln(e.getMessage());
                 } catch (IOException e) {
-                    cli.writeln("Unknown exception");
+                    cli.writeln(String.format("Unknown exception %s", e.getMessage()));
                 }
             }
         }

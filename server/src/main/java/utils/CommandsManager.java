@@ -49,7 +49,7 @@ public class CommandsManager {
     }
 
     public void executeCommand(UserInterface cli, Storage storage, String commandString) throws IOException {
-        String[] parsedCommandString = commandString.split(" ");
+        String[] parsedCommandString = commandString.trim().split(" ");
         Command command = getCommand(parsedCommandString[0]);
         String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
         command.execute(cli, storage, args);
