@@ -7,7 +7,6 @@ import utils.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 
@@ -22,15 +21,11 @@ public class Main {
         );
 
         Integer port = 0;
-
+        Boolean isPortAvailable = false;
         do {
-            try{
-                port = cli.readIntWithMessage("Provide port to run (0 < port < 65535)");
-            }catch (Exception e){
-                cli.writeln(String.format("Wrong data provided: %s", e.getMessage()));
-                System.exit(1);
-            }
-        } while (port <= 0 || port > 65535);
+            port = cli.readIntWithMessage("Provide port to run (0 < port < 65535)");
+            isPortAvailable = Server.isPortAvailable(port);
+        } while (!isPortAvailable);
 
 
         // Parse args
@@ -50,7 +45,7 @@ public class Main {
                 storage = (Storage) xstream.fromXML(lines);
                 cli.writeln("Storage loaded from " + file.getAbsolutePath());
             } catch (FileNotFoundException e) {
-                cli.writeln("Failed to load dump from file");
+                cli.writeln("Failed to load dump from file.");
             }
         }
 
@@ -63,12 +58,11 @@ public class Main {
         // On exit hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                cmdManager.executeCommand(cli, finalStorage, "save");
+                cmdManager.executeCommand(cli, finalStorage, String.format("save"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }));
-
 
 
         while (true) {
@@ -78,10 +72,9 @@ public class Main {
                     cmdManager.executeCommand(cli, storage, cmd);
                 } catch (java.util.NoSuchElementException e) {
                     cli.writeln("Invalid script");
-                }
-                catch (NoSuchCommandException e) {
+                } catch (NoSuchCommandException e) {
                     cli.writeln(String.format("Command %s not found", e.getMessage()));
-                }catch (InvalidInputException e) {
+                } catch (InvalidInputException e) {
                     cli.writeln("Wrong data provided: " + e.getMessage());
                 } catch (InvalidParamsCount e) {
                     cli.writeln("Invalid params count provided");
@@ -94,6 +87,8 @@ public class Main {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+                System.exit(1);
             }
         }
 

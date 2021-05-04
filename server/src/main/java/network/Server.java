@@ -96,6 +96,15 @@ public class Server {
         System.out.printf("server started on localhost:%s%n", port);
     }
 
+    public static boolean isPortAvailable(int port){
+        try (ServerSocket ignored = new ServerSocket(port)) {
+            return true;
+        } catch (IOException ignored) {
+            ignored.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(CommandsManager cmdManager, Storage storage, int port) {
         try {
             Server server = new Server(cmdManager, storage);
