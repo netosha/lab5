@@ -3,6 +3,7 @@ package commands;
 import collection.StudyGroup;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import utils.Storage;
@@ -70,6 +71,9 @@ public class RemoveGreater extends Command{
     @Override
     public String execute(Storage storage, Object data) throws IOException {
         XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         Request parsed = (Request) data;
         String key = parsed.key;
 

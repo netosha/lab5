@@ -2,6 +2,7 @@ package network;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import commands.Clear;
 import utils.*;
 
@@ -59,13 +60,15 @@ public class Server {
                         String rawString = new String(bb.array()).trim();
 
                         if (rawString.length() <= 0) {
-//                            System.out.println(rawString);
                             sc.close();
                             System.out.println("Connection closed...");
                         } else {
                             bb.flip();
                             try {
-                                XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
+                                XStream xstream = new XStream(new StaxDriver());
+                                xstream.addPermission(NoTypePermission.NONE);
+                                xstream.allowTypesByRegExp(new String[] { ".*" });
+
                                 Message parsed = (Message) xstream.fromXML(rawString);
                                 String payload = cmdManager.executeCommand(storage, parsed.command, parsed.data);
                                 System.out.printf("Payload: %s\n", payload);

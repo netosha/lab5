@@ -2,6 +2,7 @@ package network;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,6 +22,9 @@ public class Client {
     public String sendMessage(String command) throws IOException {
         Message message = new Message(command, "");
         XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         String req = xstream.toXML(message);
 //        System.out.println(req);
         out.println(req);
@@ -32,6 +36,9 @@ public class Client {
     public String sendMessage(String command, Object data) throws IOException {
         Message message = new Message(command, data);
         XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         String req = xstream.toXML(message);
 //        System.out.println(req);
         out.println(req);
@@ -50,6 +57,9 @@ public class Client {
             }catch (java.net.ConnectException e){
                 System.out.println("Connection refused. Trying again...");
                 TimeUnit.SECONDS.sleep(1);
+            }catch (IllegalArgumentException e){
+                System.out.printf("Error connection creating: %s%n", e.getMessage());;
+                System.exit(1);
             }catch (Exception e){
                 e.printStackTrace();
             }

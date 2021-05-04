@@ -37,7 +37,7 @@ public class CommandsManager {
     }
 
     public void executeCommand(UserInterface cli, Client client, String commandString) throws IOException, NoSuchCommandException {
-        String[] parsedCommandString = commandString.split(" ");
+        String[] parsedCommandString = commandString.trim().split(" ");
         Command command = getCommand(parsedCommandString[0]);
         String[] args = Arrays.copyOfRange(parsedCommandString, 1, parsedCommandString.length);
         try{

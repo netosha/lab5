@@ -3,6 +3,7 @@ package commands;
 import collection.StudyGroup;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import network.Client;
@@ -55,7 +56,10 @@ public class FilterLessThanStudentsCount extends Command {
             throw new InvalidInputException("Value should be long");
         }
 
-        XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
+        XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         String resp = client.sendMessage("filter_less_than_students_count", new Request(value));
         Response response = (Response) xstream.fromXML(resp);
         if (response.studyGroups.size() == 0) {

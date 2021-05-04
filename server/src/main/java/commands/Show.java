@@ -3,6 +3,7 @@ package commands;
 import collection.StudyGroup;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import utils.CommandsManager;
 import utils.Storage;
 import utils.UserInterface;
@@ -36,6 +37,9 @@ public class Show extends Command {
     @Override
     public String execute(Storage storage, Object data) throws IOException {
         XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         return xstream.toXML(new Response(storage));
     }
 }

@@ -3,6 +3,7 @@ package commands;
 import collection.StudyGroup;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import network.Client;
@@ -48,8 +49,11 @@ public class Insert extends Command {
         }
         String key = args[0];
 
+        XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         StudyGroup studyGroup = cli.readStudyGroup();
-        XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
         String resp = client.sendMessage("insert", new Request(key, studyGroup));
         Response response = (Response) xstream.fromXML(resp);
         cli.writeln(response.message);

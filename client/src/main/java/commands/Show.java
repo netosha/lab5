@@ -2,6 +2,7 @@ package commands;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.thoughtworks.xstream.security.NoTypePermission;
 import commands.Command;
 import commands.Info;
 import network.Client;
@@ -31,7 +32,10 @@ public class Show extends Command {
 
     @Override
     public void execute(UserInterface cli, Client client, String[] args) throws IOException {
-        XStream xstream = new XStream(new StaxDriver()); // does not require XPP3 library starting with Java 6
+        XStream xstream = new XStream(new StaxDriver());
+        xstream.addPermission(NoTypePermission.NONE);
+        xstream.allowTypesByRegExp(new String[] { ".*" });
+
         String resp = client.sendMessage("show");
         Response response = (Response) xstream.fromXML(resp);
 
