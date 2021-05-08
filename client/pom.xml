@@ -6,7 +6,7 @@
 
     <groupId>groupId</groupId>
     <artifactId>client</artifactId>
-    <version>1.02-SNAPSHOT</version>
+    <version>1.04-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>

@@ -23,7 +23,7 @@ public class Show extends Command {
     @XmlRootElement(name = "Response")
     @XmlAccessorType(XmlAccessType.FIELD)
     public class Response {
-        private Storage storage;
+        public Storage storage;
 
         Response(Storage s) {
             storage = s;

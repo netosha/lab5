@@ -4,6 +4,7 @@ import utils.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 
 
 public class Main {
@@ -17,11 +18,11 @@ public class Main {
         Integer port = 0;
 
         do {
-            try{
+            try {
                 port = cli.readIntWithMessage("Provide port to connect (0 < port < 65535)");
-            }catch (Exception e){
+            } catch (Exception e) {
                 cli.writeln(String.format("Wrong data provided: %s", e.getMessage()));
-                System.exit(1);
+                e.printStackTrace();
             }
         } while (port <= 0 || port > 65535);
 
@@ -33,15 +34,14 @@ public class Main {
                 String cmd = cli.read();
                 try {
                     cmdManager.executeCommand(cli, client, cmd);
-                } catch (java.util.NoSuchElementException e) {
+                } catch (NoSuchElementException e) {
                     cli.writeln("Invalid script");
-                }catch (NetworkException e){
+                } catch (NetworkException e) {
                     cli.writeln("Connection lost. Trying connect again");
                     client.connect(port);
-                }
-                catch (NoSuchCommandException e) {
+                } catch (NoSuchCommandException e) {
                     cli.writeln(String.format("Command %s not found", e.getMessage()));
-                }catch (InvalidInputException e) {
+                } catch (InvalidInputException e) {
                     cli.writeln("Wrong data provided: " + e.getMessage());
                 } catch (InvalidParamsCount e) {
                     cli.writeln("Invalid params count provided");
@@ -52,7 +52,10 @@ public class Main {
                 } catch (IOException e) {
                     cli.writeln(String.format("Unknown exception %s", e.getMessage()));
                 }
+            } else {
+                System.exit(1);
             }
         }
+
     }
 }

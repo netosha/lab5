@@ -98,11 +98,14 @@ public class UserInterface {
                 throw new AbortCommandException("Command aborted");
             }
             return tmp;
-        }catch (Exception e){
+        }catch (NoSuchElementException e){
+            System.exit(1);
+        }
+        catch (Exception e){
             throw new InvalidInputException("");
         }
+        return "";
     }
-
     public Long readLongWithMessage(String message) {
         Long tmp = null;
         do {
