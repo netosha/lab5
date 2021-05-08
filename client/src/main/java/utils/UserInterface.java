@@ -99,16 +99,13 @@ public class UserInterface {
             }
             return tmp;
         }catch (NoSuchElementException e){
-            e.printStackTrace();
             System.exit(1);
         }
         catch (Exception e){
-            e.printStackTrace();
             throw new InvalidInputException("");
         }
         return "";
     }
-
     public Long readLongWithMessage(String message) {
         Long tmp = null;
         do {

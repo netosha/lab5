@@ -1,5 +1,6 @@
 package utils;
 
+import com.thoughtworks.xstream.XStreamException;
 import commands.*;
 import exceptions.NetworkException;
 import exceptions.NoSuchCommandException;
@@ -44,6 +45,8 @@ public class CommandsManager {
             command.execute(cli, client, args);
         }catch (NullPointerException e){
             throw new NetworkException("Connection lost");
+        }catch (XStreamException e){
+            cli.writeln(String.format("Failed to parse response from server: %s", e.getCause()));
         }
     }
 

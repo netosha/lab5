@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.security.NoTypePermission;
 import exceptions.InvalidInputException;
 import exceptions.InvalidParamsCount;
 import network.Client;
+import utils.Storage;
 import utils.UserInterface;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -52,6 +53,27 @@ public class Update extends Command {
         XStream xstream = new XStream(new StaxDriver());
         xstream.addPermission(NoTypePermission.NONE);
         xstream.allowTypesByRegExp(new String[] { ".*" });
+
+
+        // Know, that is most ineffective way to check if id are not exists
+        // But i don't want to hardcode another way to get ID from server
+        String rawStorage = client.sendMessage("show");
+        Show.Response parsedStorage = (Show.Response) xstream.fromXML(rawStorage);
+        Storage storage = parsedStorage.storage;
+
+        StudyGroup updatingStudyGroup = storage
+                .getStudyGroups()
+                .values()
+                .stream()
+                .filter(sg -> sg.getId().equals(Integer.parseInt(args[0])))
+                .findFirst()
+                .orElse(null);
+
+        if (updatingStudyGroup == null) {
+            cli.writeln("StudyGroup with provided Id not found");
+            return;
+        }
+
 
         Integer id = Integer.parseInt(args[0]);
         StudyGroup studyGroup = cli.readStudyGroup();

@@ -1,6 +1,7 @@
 package network;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import commands.Clear;
@@ -73,6 +74,9 @@ public class Server {
                                 String payload = cmdManager.executeCommand(storage, parsed.command, parsed.data);
                                 System.out.printf("Payload: %s\n", payload);
                                 sc.write(ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8)));
+                            } catch (XStreamException e){
+                                sc.write(enc.encode(CharBuffer.wrap("Command execution failed: " + e.toString())));
+                                System.out.printf("Failed to parse response from client:%n%s", e.getCause());
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 sc.write(enc.encode(CharBuffer.wrap("Command execution failed: " + e.toString())));
@@ -93,14 +97,18 @@ public class Server {
         serverSocketChannel.configureBlocking(false);
         serverSocketChannel.bind(new InetSocketAddress("localhost", port));
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-        System.out.printf("server started on localhost:%s%n", port);
+        System.out.printf("Server started on localhost:%s%n", port);
     }
 
     public static boolean isPortAvailable(int port){
         try (ServerSocket ignored = new ServerSocket(port)) {
+            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.bind(new InetSocketAddress("localhost", port));
+            serverSocketChannel.close();
             return true;
         } catch (IOException ignored) {
-            ignored.printStackTrace();
+            System.out.printf("Creation failed: %s%n", ignored.getMessage());
             return false;
         }
     }
